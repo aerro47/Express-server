@@ -153,7 +153,7 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
             err.status = 404;
             return next(err);
         } else {
-            err = new Error(`Comment ${req.params.campsiteId} not found`);
+            err = new Error(`...${req.params.commentId} not found`);
             err.status = 404;
             return next(err);
         }
@@ -162,7 +162,7 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
 })
 .post(authenticate.verifyUser, (req, res, next) => {
     res.statusCode = 403;
-    res.end(`POSt operation not supported on /campsites/${req.params.commentId}/comments/${req.params.commentId}`);
+    res.end(`POST operation not supported on /campsites/${req.params.campsiteId}/comments/${req.params.commentId}`);
 })
 .put(authenticate.verifyUser, (req, res, next) => {
     Campsite.findById(req.params.campsiteId)
@@ -212,6 +212,10 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
                     res.json(campsite);
                 })
                 .catch(err => next(err));
+            } else {
+                err = new Error ('You are unauthorized to delete this comment!')
+                err.statusCode = 403;
+                return next (err);
             }
         } else if (!campsite) {
             err = new Error(`Campsite ${req.params.campsiteId} not found`);
